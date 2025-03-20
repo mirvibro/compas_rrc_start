@@ -21,16 +21,18 @@ targets = [[[955.12, 157.91, 110], [0, 0.707504, 0.706709, 0], [0, 0, 0, 0], [9E
 
 def close_gripper():
     pulse_time = 0.2
-    done = abb.send_and_wait(rrc.PulseDigital('do_1', pulse_time))
+    done = abb.send_and_wait(rrc.PulseDigital('gripper_close', pulse_time))
 
 def open_gripper():
     pulse_time = 0.2
-    done = abb.send_and_wait(rrc.PulseDigital('do_2', pulse_time))
+    done = abb.send_and_wait(rrc.PulseDigital('gripper_open', pulse_time))
 
 def move_and_lift(target, speed = 100):
-    # Copy target and change y value
-    above_target = target
-    target.point[1] += 50
+    print('Targeting ')
+
+    # Copy target and change z value
+    above_target = target.copy()
+    above_target.point[2] += 100
 
     # Move robot to pos above the gripping point
     done = abb.send_and_wait(rrc.MoveToFrame(above_target, speed, rrc.Zone.FINE, rrc.Motion.JOINT))
@@ -45,7 +47,9 @@ def move_and_lift(target, speed = 100):
 
     return done
 
-def move_and_drop(target = drop_off, speed = 100):
+def move_and_drop(target = Frame(drop_off[0], [-1,0,0]), speed = 100):
+    print('Dropping off at' )
+
     # Move robot to drop off point
     done = abb.send_and_wait(rrc.MoveToFrame(target, speed, rrc.Zone.Z20, rrc.Motion.JOINT))
 
@@ -63,17 +67,17 @@ if __name__ == '__main__':
 
     # Create ABB Client
     abb = rrc.AbbClient(ros, '/rob1')
-    print('Connected to Abby')
+    print('Connected.')
 
     # Set tool
-    abb.send(rrc.SetTool('tool0'))
+    abb.send(rrc.SetTool('tool1'))
 
     # Set work object
     abb.send(rrc.SetWorkObject('wobj0'))
 
     for target in targets:
-        done = move_and_lift(Frame(target[0]))
-        done = move_and_drop(Frame(drop_off))
+        done = move_and_lift(Frame(target[0], [-1,0,0]))
+        done = move_and_drop(Frame(drop_off[0], [-1,0,0]))
 
     # Print feedback 
     print('Feedback = ', done)
