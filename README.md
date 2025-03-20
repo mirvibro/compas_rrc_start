@@ -1,9 +1,9 @@
 # Welcome to (working title robot project dynamic (dis)assembly)
 
-> Working title robot project dynamic (dis)assembly does this and that.
-> A python script tells cobot ABB GoFa12 1500 127cm what to do using compas_rrc.
+Working title robot project dynamic (dis)assembly does this and that.
+A python script tells cobot ABB GoFa12 1500 127cm what to do using compas_rrc.
 
-> Soon, a camera will be mounted on the robot, it will perform a scanning routine, which then gives a collection of pictures to be photogrammetrated and meshed. A pickup order is generated and executed.
+Soon, a camera will be mounted on the robot, it will perform a scanning routine, which then gives a collection of pictures to be photogrammetrated and meshed. A pickup order is generated and executed.
 
 
 # Installation guide
