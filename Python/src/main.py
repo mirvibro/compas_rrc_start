@@ -1,7 +1,9 @@
 import compas_rrc as rrc
 from compas.geometry import Frame
+from datetime import datetime
 import json
-import cv2 as cv
+import os
+import cv2 as cv2
 
 
 def read_file(file):
@@ -13,11 +15,12 @@ def read_file(file):
 
 def take_picture(cam):
     result, image = cam.read()
-    if (result): 
-        cv.imshow("Cam", image) 
-        cv.imwrite("Cam.png", image)
-        cv.waitKey(0) 
-        cv.destroyWindow("Cam")
+    if (result):
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = os.path.join('imgs', f"{timestamp}.jpg")
+
+        cv2.imwrite(filename, image)
+        print(f"Image saved: {filename}")
     else: 
         print("No image detected, please try again.") 
 
@@ -30,30 +33,36 @@ if __name__ == '__main__':
 
     # Create ABB Client
     abb = rrc.AbbClient(ros, '/rob1')
-    print('Connected.')
+    print('Connected')
 
     # Set up robot
-    abb.send(rrc.SetTool('tool0'))
+    abb.send(rrc.SetTool('tool1'))
     abb.send(rrc.SetWorkObject('wobj0'))
 
     # Set up camera
     cam_port = 0
-    cam = cv.VideoCapture(cam_port)
+    cam = cv2.VideoCapture(cam_port, cv2.CAP_DSHOW)
+    if not os.path.exists('imgs'):
+        os.makedirs('imgs')
+    print('Camera set up')
 
     # Read target planes for scan
-    data = read_file('Python\json\target-planes-scan.json')
+    data = read_file('./json/target-planes-routine.json')
 
     # Send target planes for scan to robot
+    print('Start scanning routine')
     for target in data['TargetPlanes']['jsonTest']:
-        point = target['point'] * 100
-        response = abb.send_and_wait(rrc.MoveToFrame(Frame(point[0], point[1], point[2], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
+        input("Press Enter to continue to the next target plane...")  # Wait for user input
+        point = target['point']
+        print("point:", point, type(point))
+        response = abb.send_and_wait(rrc.MoveToFrame(Frame(point, [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
         print('Moved to ' + str(point[0]) + str(point[1]) + str(point[2]))
         take_picture(cam)
     
     # Print robot's response
     print('Response: ', response)
 
-    # Do photogrammetry
+    # Do photogrammetry using COLMAP
 
     # Send mesh to folder where rhino can read it
 
@@ -66,7 +75,7 @@ if __name__ == '__main__':
     # Close client
     ros.close()
     ros.terminate()
-    print('Disconnected.')
+    print('Disconnected')
 
 
     
