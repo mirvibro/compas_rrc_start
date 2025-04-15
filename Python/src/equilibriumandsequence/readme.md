@@ -5,3 +5,4 @@ Creating connectivity graph, disassembly sequence.
 
 
 ### ipopt solver installation:
+ test
