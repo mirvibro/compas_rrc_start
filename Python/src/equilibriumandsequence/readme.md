@@ -9,7 +9,8 @@ Creating connectivity graph, disassembly sequence
 https://blockresearchgroup.github.io/compas_cra/latest/installation.html
 
 **conda environment** 
-working with these packages/libraries:
+
+working as tested with these packages/libraries:
 
 pythyon: 3.10.16
 
