@@ -1,0 +1,2 @@
+## mesh files etc:
+rhino meshes when saved as json with rhinomeshobject_to_compas and compas.json_dump for some reason store vertices individually per mesh face, even if valence is >1; it's also not a closed mesh. I still have to figure out how this conversion happens internally and check how this affects our photogrammetry workflow. A normal mesh cube with 6 quad faces/8 vertices, after the saving it as json then has 24 vertices. Right now, it works after I use compas's Mesh.weld (even though it's a closed mesh in rhino), though there are still 24 vertices. 
