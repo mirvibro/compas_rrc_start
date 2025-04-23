@@ -12,14 +12,23 @@ https://blockresearchgroup.github.io/compas_cra/latest/installation.html
 working with these packages/libraries:
 
 pythyon: 3.10.16
+
 compas: 2.10.0
+
 compas-assembly: 0.7.1
+
 compas-cra: 0.50
+
 compas-viewer: 1.4.0
+
 compas_robots: 0.6.0
+
 ipopt: 3.14.9
+
 numpy: 1.24.3
+
 pyomo: 6.4.2
+
 shapely: 2.1.0
 
 notes: numpy has to be uninstalled and reinstalled as python installs numpy 2.x+ as default
