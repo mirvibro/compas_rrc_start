@@ -19,6 +19,7 @@ from compas_assembly.datastructures import Block
 from compas_cra.viewers import cra_view
 from compas_viewer import Viewer
 from compas_viewer.scene import Tag
+from compas_viewer.scene import FrameObject
 from compas.datastructures import Graph
 from compas.geometry import Line
 from compas.geometry import Frame
@@ -113,15 +114,36 @@ for index, edgetest in enumerate(revised_edges):
 
 
 
-#----------------------- target planes: --------------------------#
+#----------------------- target frames: --------------------------#
 
-top_face_planes = []
+""" top_face_planes = []
 for block in assembly.blocks():
     topface = block.top()
     frame_og = block.face_frame(topface)
     frame_og.flip()
     top_face_planes.append(frame_og)
-    print(frame_og)
+    #print(frame_og) """
+
+top_face_frames = []
+for block in assembly.blocks():
+    topface = block.top()
+    frame_og = block.face_frame(topface)
+    frame_og.flip()
+    top_face_frames.append(frame_og)
+
+#print(top_face_frames)
+
+#which axis is the gripper oriented towards?
+
+targetframes_sorted = []
+frame_point_zheights = []
+for block in assembly.blocks():
+    topface = block.top()
+    frame_og = block.face_frame(topface)
+    frame_og.flip()
+    frame_point_zheights.append(frame_og.point.z)
+
+print(frame_point_zheights)
 
 
 
@@ -131,11 +153,14 @@ for block in assembly.blocks():
 #view without solver:
 
 viewer = Viewer()
+viewer.scene.add(top_face_frames)
+#viewer.scene.scale(100)
+#viewer.scene.add(FrameObject(top_face_frames, [100, 100, 100, 100], show_framez = True))
+#viewer.add(FrameObject(top_face_frames, [100, 100, 100, 100], show_framez = True))
 viewer.scene.add(free, show_faces=False)
-viewer.scene.add(top_face_planes, framesize = [100, 100, 100, 100])
 viewer.renderer.camera.target = [100, 100, 0]
 viewer.renderer.camera.position = [500, -500, 200]
-viewer.show()
+#viewer.show()
 
 
 """ cra_penalty_solve(assembly, verbose=True, timer=True, density=0.1)
