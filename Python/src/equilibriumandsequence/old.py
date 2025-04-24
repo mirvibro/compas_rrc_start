@@ -135,15 +135,15 @@ for block in assembly.blocks():
 
 #which axis is the gripper oriented towards?
 
-targetframes_sorted = []
-frame_point_zheights = []
-for block in assembly.blocks():
-    topface = block.top()
-    frame_og = block.face_frame(topface)
-    frame_og.flip()
-    frame_point_zheights.append(frame_og.point.z)
+def frame_point_zheights(z):
+    for block in assembly.blocks():
+        topface = block.top()
+        frame_og = block.face_frame(topface)
+        frame_og.flip()
+        return frame_og.point.z
 
-print(frame_point_zheights)
+targetframes_sorted = top_face_frames.sort(key=frame_point_zheights)
+
 
 
 
@@ -152,7 +152,7 @@ print(frame_point_zheights)
 
 #view without solver:
 
-viewer = Viewer()
+""" viewer = Viewer()
 viewer.scene.add(top_face_frames)
 #viewer.scene.scale(100)
 #viewer.scene.add(FrameObject(top_face_frames, [100, 100, 100, 100], show_framez = True))
@@ -160,7 +160,7 @@ viewer.scene.add(top_face_frames)
 viewer.scene.add(free, show_faces=False)
 viewer.renderer.camera.target = [100, 100, 0]
 viewer.renderer.camera.position = [500, -500, 200]
-#viewer.show()
+#viewer.show() """
 
 
 """ cra_penalty_solve(assembly, verbose=True, timer=True, density=0.1)

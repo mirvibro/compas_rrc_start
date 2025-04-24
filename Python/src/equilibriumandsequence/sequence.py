@@ -64,28 +64,6 @@ def scan_to_CRA_assembly(filepath: str):
 
     return assembly
 
-#----------------------- comput interfaces & set boundary conditions: --------------------------#
-
-assembly_interfaces_numpy(assembly, nmax=7, amin=1e-4, tmax=1e-6)
-
-
-
-
-
-
-#----------------------- diagnostics: --------------------------#
-
-""" 
-for block in assembly.blocks():
-    face_keys = list(block.faces())  
-    for fkey in face_keys:
-        print("Block node:", assembly.block_node(block), "face key:", fkey,"Face attributes:", block.face_attributes(fkey))#, "face vertices:", block.face_vertices(fkey), "face coordinates:", block.face_coordinates(fkey))
- """
-
-if_list = []
-for l in assembly.interfaces():
-    if_list.append(l.polygon)
-
 
 
 def connectivity_graph(assembly, vis=True, vis_blocks=False):
@@ -143,6 +121,7 @@ def connectivity_graph(assembly, vis=True, vis_blocks=False):
     return None
 
 
+
 def target_frames_by_z(assembly, save_frames=False, vis=False):
     """
     computes frames for robot targets from the assembly by sorting by z height
@@ -177,55 +156,23 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
 
     #which axis is the gripper oriented towards?
 
-    targetframes_sorted = []
-    frame_point_zheights = []
-    for block in assembly.blocks():
-        topface = block.top()
-        frame_og = block.face_frame(topface)
-        frame_og.flip()
-        frame_point_zheights.append(frame_og.point.z)
+    def frame_z(frame):
+        return frame.point.z
 
-    print(frame_point_zheights)
+    targetframes_sorted = sorted(top_face_frames, key=frame_z)
 
-    return target_frames
+    if vis == True:
+        viewer = Viewer()
+        viewer.scene.add(targetframes_sorted)
+        for block in assembly.blocks():
+            viewer.scene.add(block, show_faces=False)
+        viewer.show()
+    else:
+        print("Set vis=True to visualize frames")
 
+    if save_frames == True: # to do
+        print("Saving as file not implemented yet, please tell Michael he's lazy")
 
-
-#----------------------- solver & visualization: --------------------------#
-
-#view without solver:
-
-viewer = Viewer()
-viewer.scene.add(top_face_frames)
-#viewer.scene.scale(100)
-#viewer.scene.add(FrameObject(top_face_frames, [100, 100, 100, 100], show_framez = True))
-#viewer.add(FrameObject(top_face_frames, [100, 100, 100, 100], show_framez = True))
-viewer.scene.add(free, show_faces=False)
-viewer.renderer.camera.target = [100, 100, 0]
-viewer.renderer.camera.position = [500, -500, 200]
-#viewer.show()
-
-
-""" cra_penalty_solve(assembly, verbose=True, timer=True, density=0.1)
-#cra_view(assembly)
-cra_view(
-    assembly,
-    scale=0.001,
-    density=1.0,
-    dispscale=1.0,
-    grid=False,
-    resultant=True,
-    nodal=True,
-    edge=True,
-    blocks=True,
-    interfaces=True,
-    forces=True,
-    forcesdirect=True,
-    forcesline=True,
-    weights=True,
-    displacements=True,
-) """
-
-#----------------------- solver loop: --------------------------#
+    return targetframes_sorted
 
 
