@@ -5,26 +5,17 @@
 """ !!!!!!!!!         !!!!!!!!! """
 
 import os
-
 import compas
-
 import compas_cra
-from compas.geometry import Box
+from compas.geometry import Box, Line, Frame
+from compas.datastructures import Graph, Mesh
 from compas_cra.datastructures import CRA_Assembly
-from compas.datastructures import Mesh
-from compas_cra.equilibrium import cra_solve
-from compas_cra.equilibrium import cra_penalty_solve
+from compas_cra.equilibrium import cra_solve, cra_penalty_solve
 from compas_cra.algorithms import assembly_interfaces_numpy
-from compas_assembly.datastructures import Block
 from compas_cra.viewers import cra_view
+from compas_assembly.datastructures import Block, Interface
 from compas_viewer import Viewer
-from compas_viewer.scene import Tag
-from compas_viewer.scene import FrameObject
-from compas.datastructures import Graph
-from compas.geometry import Line
-from compas.geometry import Frame
-from compas_assembly.datastructures import Interface
-
+from compas_viewer.scene import Tag, FrameObject
 
 
 
