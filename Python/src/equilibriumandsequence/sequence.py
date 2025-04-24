@@ -7,7 +7,7 @@
 import os
 import compas
 import compas_cra
-from compas.geometry import Box, Line, Frame
+from compas.geometry import Box, Line, Frame, centroid_points
 from compas.datastructures import Graph, Mesh
 from compas_cra.datastructures import CRA_Assembly
 from compas_cra.equilibrium import cra_solve, cra_penalty_solve
@@ -138,7 +138,7 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
     """
     free_assembly = assembly.copy()
     free_assembly.delete_block(0)
-    
+
     top_face_frames = []
     for block in free_assembly.blocks():
         topface = block.top()
@@ -161,6 +161,11 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
             viewer.scene.add(tag)
         for block in assembly.blocks():
             viewer.scene.add(block, show_faces=False)
+        frame_points = []
+        for frame in targetframes_sorted:
+            frame_points.append(frame.point)
+        viewer.renderer.camera.target = centroid_points(frame_points)
+        #viewer.renderer.camera.position = [500, -500, 200]
         viewer.show()
     else:
         print("Set vis=True to visualize frames")
