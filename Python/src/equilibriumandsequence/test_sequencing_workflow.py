@@ -1,3 +1,7 @@
+"""
+test script for sequencing function etc.
+"""
+
 from sequence import scan_to_CRA_assembly, connectivity_graph, target_frames_by_z
 from compas_cra.algorithms import assembly_interfaces_numpy
 

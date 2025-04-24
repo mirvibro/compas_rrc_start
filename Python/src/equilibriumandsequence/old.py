@@ -124,6 +124,26 @@ for block in assembly.blocks():
     top_face_planes.append(frame_og)
     #print(frame_og) """
 
+""" top_face_frames = []
+for block in assembly.blocks():
+    topface = block.top()
+    frame_og = block.face_frame(topface)
+    frame_og.flip()
+    top_face_frames.append(frame_og)
+ """
+#print(top_face_frames)
+
+#which axis is the gripper oriented towards?
+
+""" def frame_point_zheights(z):
+    for block in assembly.blocks():
+        topface = block.top()
+        frame_og = block.face_frame(topface)
+        frame_og.flip()
+        return frame_og.point.z
+
+targetframes_sorted = top_face_frames.sort(key=frame_point_zheights) """
+
 top_face_frames = []
 for block in assembly.blocks():
     topface = block.top()
@@ -131,21 +151,23 @@ for block in assembly.blocks():
     frame_og.flip()
     top_face_frames.append(frame_og)
 
-#print(top_face_frames)
+    #print(top_face_frames)
 
-#which axis is the gripper oriented towards?
+    #which axis is the gripper oriented towards?
 
-def frame_point_zheights(z):
-    for block in assembly.blocks():
-        topface = block.top()
-        frame_og = block.face_frame(topface)
-        frame_og.flip()
-        return frame_og.point.z
+def frame_z(frame):
+    return frame.point.z
 
-targetframes_sorted = top_face_frames.sort(key=frame_point_zheights)
+targetframes_sorted = sorted(top_face_frames, key=frame_z)
 
-
-
+viewer = Viewer()
+viewer.scene.add(targetframes_sorted)
+for order_nr, frame in enumerate(targetframes_sorted, start=1):
+    tag = Tag(order_nr, frame.point)
+    viewer.scene.add(tag)
+for block in assembly.blocks():
+    viewer.scene.add(block, show_faces=False)
+viewer.show()
 
 
 #----------------------- solver & visualization: --------------------------#
@@ -160,7 +182,7 @@ viewer.scene.add(top_face_frames)
 viewer.scene.add(free, show_faces=False)
 viewer.renderer.camera.target = [100, 100, 0]
 viewer.renderer.camera.position = [500, -500, 200]
-#viewer.show() """
+viewer.show() """
 
 
 """ cra_penalty_solve(assembly, verbose=True, timer=True, density=0.1)

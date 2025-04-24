@@ -15,7 +15,7 @@ from compas_cra.algorithms import assembly_interfaces_numpy
 from compas_cra.viewers import cra_view
 from compas_assembly.datastructures import Block, Interface
 from compas_viewer import Viewer
-from compas_viewer.scene import Tag, FrameObject
+from compas_viewer.scene import Tag, FrameObject, TagObject
 
 
 
@@ -136,25 +136,29 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
             list of sorted target frames
 
     """
+    free_assembly = assembly.copy()
+    free_assembly.delete_block(0)
+    
     top_face_frames = []
-    for block in assembly.blocks():
+    for block in free_assembly.blocks():
         topface = block.top()
         frame_og = block.face_frame(topface)
         frame_og.flip()
         top_face_frames.append(frame_og)
-
-    #print(top_face_frames)
 
     #which axis is the gripper oriented towards?
 
     def frame_z(frame):
         return frame.point.z
 
-    targetframes_sorted = sorted(top_face_frames, key=frame_z)
+    targetframes_sorted = sorted(top_face_frames,reverse=True, key=frame_z)
 
     if vis == True:
         viewer = Viewer()
         viewer.scene.add(targetframes_sorted)
+        for order_nr, frame in enumerate(targetframes_sorted, start=1):
+            tag = Tag(text=str(order_nr), position=frame.point)
+            viewer.scene.add(tag)
         for block in assembly.blocks():
             viewer.scene.add(block, show_faces=False)
         viewer.show()
@@ -165,5 +169,3 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
         print("Saving as file not implemented yet, please tell Michael he's lazy")
 
     return targetframes_sorted
-
-
