@@ -21,11 +21,11 @@ targets = [[[955.12, 157.91, 110], [0, 0.707504, 0.706709, 0], [0, 0, 0, 0], [9E
 
 def close_gripper():
     pulse_time = 0.2
-    done = abb.send_and_wait(rrc.PulseDigital('gripper_close', pulse_time))
+    done = abb.send_and_wait(rrc.PulseDigital('ABB_Scalable_IO_0_DO1', pulse_time))
 
 def open_gripper():
     pulse_time = 0.2
-    done = abb.send_and_wait(rrc.PulseDigital('gripper_open', pulse_time))
+    done = abb.send_and_wait(rrc.PulseDigital('ABB_Scalable_IO_0_DO2', pulse_time))
 
 def move_and_lift(target, speed = 100):
     print('Targeting ')

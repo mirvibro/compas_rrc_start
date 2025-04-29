@@ -30,5 +30,3 @@ def reconstruct():
     #pycolmap.undistort_images(mvs_path, output_path, image_dir)
     #pycolmap.patch_match_stereo(mvs_path)  # requires compilation with CUDA
     #pycolmap.stereo_fusion(mvs_path / "dense.ply", mvs_path)
-
-reconstruct()

@@ -1,10 +1,14 @@
-import compas_rrc as rrc
-from compas.geometry import Frame
-from datetime import datetime
 import json
-import os
-import cv2 as cv2
+from camera import Camera
+from robot import Robot
+from gripper import Gripper
+from compas.geometry import Frame
+import reconstruction_realitycapture
 
+ROB_NAME = '/rob1'
+TOOL_NAME = 'tool1'
+WOBJ_NAME = 'wobj0'
+CAM_PORT = 0
 
 def read_file(file):
     f = open(file)
@@ -13,68 +17,58 @@ def read_file(file):
     f.close()
     return data
 
-def take_picture(cam):
-    result, image = cam.read()
-    if (result):
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = os.path.join('imgs', f"{timestamp}.jpg")
+def scan_routine(robot, camera, data):
+    for target in data['TargetPlanes']['Planes']:
+        # Uncomment this to wait for user input before each step
+        #input("Press Enter to continue to the next target plane...")
 
-        cv2.imwrite(filename, image)
-        print(f"Image saved: {filename}")
-    else: 
-        print("No image detected, please try again.") 
+        # Multiply by 1000 because json data is in m and robot works with mm
+        point = [target['point'][0]*1000,
+                 target['point'][1]*1000,
+                 target['point'][2]*1000]
+        x_axis = [target['x-axis'][0]*1000,
+                  target['x-axis'][1]*1000,
+                  target['x-axis'][2]*1000]
+        y_axis = [target['y-axis'][0]*1000,
+                  target['y-axis'][1]*1000,
+                  target['y-axis'][2]*1000]
+
+        robot.move_to(Frame(point, x_axis, y_axis))
+        camera.take_picture()
 
 
 if __name__ == '__main__':
 
-    # Create Ros Client
-    ros = rrc.RosClient()
-    ros.run()
+    # Set up tool
+    tool = Gripper(TOOL_NAME)
 
-    # Create ABB Client
-    abb = rrc.AbbClient(ros, '/rob1')
-    print('Connected')
-
-    # Set up robot
-    abb.send(rrc.SetTool('tool1'))
-    abb.send(rrc.SetWorkObject('wobj0'))
+    # Set up robot and move to home position
+    robot = Robot(ROB_NAME, tool, WOBJ_NAME)
+    robot.move_to_home
 
     # Set up camera
-    cam_port = 0
-    cam = cv2.VideoCapture(cam_port, cv2.CAP_DSHOW)
-    if not os.path.exists('imgs'):
-        os.makedirs('imgs')
-    print('Camera set up')
-
-    # Read target planes for scan
-    data = read_file('./json/target-planes-routine.json')
-
-    # Send target planes for scan to robot
-    print('Start scanning routine')
-    for target in data['TargetPlanes']['jsonTest']:
-        input("Press Enter to continue to the next target plane...")  # Wait for user input
-        point = target['point']
-        print("point:", point, type(point))
-        response = abb.send_and_wait(rrc.MoveToFrame(Frame(point, [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
-        print('Moved to ' + str(point[0]) + str(point[1]) + str(point[2]))
-        take_picture(cam)
+    camera = Camera(CAM_PORT, "imgs")
     
-    # Print robot's response
-    print('Response: ', response)
+    # Read target planes for scan
+    data = read_file('./json/target-planes-scan.json')
 
-    # Do photogrammetry using COLMAP
+    # Execute scan routine
+    scan_routine(robot, camera, data)
+        
+    # Do photogrammetry
+    reconstruction_realitycapture.reconstruct()
 
-    # Send mesh to folder where rhino can read it
+    # Start object recognition and partition thru rhino.compute, return result or write to folder
 
-    # Read target planes from rhino result folder
+    # Start reconfiguration thru rhino.compute, return result or write to folder
 
-    # Send target planes for pick and place to robot
+    # Figure out how to get from current to goal configuration (all same parts or different?)
 
-    # Wait for more input??
+    # Move robot accordingly
+    
 
     # Close client
-    ros.close()
-    ros.terminate()
+    robot.shutdown
     print('Disconnected')
 
 
