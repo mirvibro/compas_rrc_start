@@ -57,7 +57,7 @@ def scan_to_CRA_assembly(filepath: str):
 
 
 
-def connectivity_graph(assembly, vis=True, vis_blocks=False):
+def connectivity_graph(assembly, vis=True, tags=True, vis_blocks=False):
     """
     constructs connectivity graph
     visualisation with compas_viewer
@@ -70,6 +70,9 @@ def connectivity_graph(assembly, vis=True, vis_blocks=False):
         vis: bool, optional
             if True, visualization with compas_viewer
 
+        tags: bool, optional
+            if True, show node tags   
+
         vis_blocks: bool,optional
             if True, shows blocks as wireframe
 
@@ -79,11 +82,9 @@ def connectivity_graph(assembly, vis=True, vis_blocks=False):
 
     """
     nodepoints = [] 
-    #node_tags = []
     for block in assembly.blocks():
         node = assembly.block_node(block)
         nodepoints.append(assembly.node_point(node))
-        #node_tags.append(Tag(block_node(block)))
 
     # edges as structured internally
     og_edges = []
@@ -102,9 +103,17 @@ def connectivity_graph(assembly, vis=True, vis_blocks=False):
     if vis == True:
         viewer = Viewer()
         viewer.scene.add(revised_edges)
+        if tags == True:
+            print("check")
+            for block in assembly.blocks():
+                node_text = assembly.block_node(block)
+                n_point = assembly.node_point(node_text)
+                tag = Tag(text=str(node_text), position=n_point) 
+                viewer.scene.add(tag)        
         if vis_blocks == True:
             for block in assembly.blocks():
                 viewer.scene.add(block, show_faces=False)
+        viewer.renderer.camera.target = centroid_points(nodepoints)                
         viewer.show()
     else:
         print("Set vis=True to visualize")
@@ -113,7 +122,7 @@ def connectivity_graph(assembly, vis=True, vis_blocks=False):
 
 
 
-def target_frames_by_z(assembly, save_frames=False, vis=False):
+def target_frames_by_z(assembly, save_frames=False, vis=False, tags=False):
     """
     computes frames for robot targets from the assembly by sorting by z height
     option to save them locally
@@ -129,6 +138,9 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
 
         vis: bool, optional
             if True, visualizes the disassembly sequence
+
+        tags: bool, optional
+            if True, show frame tags             
 
     Returns:
 
@@ -156,9 +168,10 @@ def target_frames_by_z(assembly, save_frames=False, vis=False):
     if vis == True:
         viewer = Viewer()
         viewer.scene.add(targetframes_sorted)
-        for order_nr, frame in enumerate(targetframes_sorted, start=1):
-            tag = Tag(text=str(order_nr), position=frame.point)
-            viewer.scene.add(tag)
+        if tags == True:
+            for order_nr, frame in enumerate(targetframes_sorted, start=1):
+                tag = Tag(text=str(order_nr), position=frame.point)
+                viewer.scene.add(tag)
         for block in assembly.blocks():
             viewer.scene.add(block, show_faces=False)
         frame_points = []
