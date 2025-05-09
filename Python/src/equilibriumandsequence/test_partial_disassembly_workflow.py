@@ -113,8 +113,8 @@ for i in assembly.nodes():
 
 
 #target_frames = target_frames_by_z(disassembly, vis=True, tags=True)
-
-""" viewer = Viewer()
+""" 
+viewer = Viewer()
 #viewer.scene.add()
 for order_nr, frame in enumerate(target_frames, start=1):
     tag = Tag(text=str(order_nr), position=frame.point)

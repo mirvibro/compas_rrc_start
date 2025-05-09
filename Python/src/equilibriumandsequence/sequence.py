@@ -35,10 +35,10 @@ def scan_to_CRA_assembly(filepath: str):
         assembly:  class: compas_cra.datastructures.CRA_Assembly
 
     """
-    d_x = 1350 #dimensions of desk
-    d_y = 1350
+    d_x = 13.50 #dimensions of desk
+    d_y = 13.50
 
-    support = Box.from_corner_corner_height([0.0, 0.0, -10.0], [d_y, d_x, -10.0], 10.0)
+    support = Box.from_corner_corner_height([0.0, 0.0, -1.0], [d_y, d_x, -1.0], 1.0)
 
     free = compas.json_load(filepath)
 
