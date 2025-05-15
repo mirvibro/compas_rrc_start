@@ -13,7 +13,7 @@ class Robot:
 
         # Set tool
         self._tool = tool or Tool()
-        self.abb_client.send(rrc.SetTool(self._tool.name))
+        self.abb_client.send(rrc.SetTool(self._tool._name))
 
         # Set work object
         self._wobj = wobj
@@ -26,7 +26,10 @@ class Robot:
         self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
 
     def move_to(self, frame):
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame), 100, rrc.Zone.FINE, rrc.Motion.JOINT)
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 50, rrc.Zone.FINE, rrc.Motion.JOINT))
+
+    def where(self):
+        print(self.abb_client.send_and_wait(rrc.GetFrame()))
 
     def shutdown(self):
         self.ros_client.close()
