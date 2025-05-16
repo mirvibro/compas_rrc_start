@@ -4,7 +4,6 @@ from robot import Robot
 from gripper import Gripper
 from compas.geometry import Frame
 import reconstruction_realitycapture
-import reconstruction_pycolmap
 
 ROB_NAME = '/rob1'
 TOOL_NAME = 'tool1'

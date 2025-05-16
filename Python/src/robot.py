@@ -23,7 +23,7 @@ class Robot:
 
     # Move
     def move_to_home(self):
-        result = self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
 
     def move_to(self, frame):
         self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 50, rrc.Zone.FINE, rrc.Motion.JOINT))
