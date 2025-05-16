@@ -4,6 +4,7 @@ from robot import Robot
 from gripper import Gripper
 from compas.geometry import Frame
 import reconstruction_realitycapture
+import reconstruction_pycolmap
 
 ROB_NAME = '/rob1'
 TOOL_NAME = 'tool1'
@@ -34,6 +35,7 @@ def scan_routine(robot, camera, data):
 
         robot.move_to(Frame(point, x_axis, y_axis))
         camera.take_picture()
+        robot.where()
 
 
 if __name__ == '__main__':
@@ -45,13 +47,11 @@ if __name__ == '__main__':
     robot = Robot(ROB_NAME, tool, WOBJ_NAME)
     robot.move_to_home()
 
-    robot.where()
-
     # Set up camera
     camera = Camera(CAM_PORT, "imgs")
     
     # Read target planes for scan
-    data = read_file('./json/scan-planes.json')
+    data = read_file('./json/scan-planes-05-16.json')
 
     # Execute scan routine
     scan_routine(robot, camera, data)
@@ -61,6 +61,9 @@ if __name__ == '__main__':
 
     # Start object recognition and partition thru rhino.compute, return result or write to folder
 
+    # Transform the meshes into concrete objects
+    #box-fitting-hausdorff.py
+
     # Start reconfiguration thru rhino.compute, return result or write to folder
 
     # Figure out how to get from current to goal configuration (all same parts or different?)
@@ -69,8 +72,7 @@ if __name__ == '__main__':
     
 
     # Close client
-    robot.shutdown
-    print('Disconnected')
+    robot.shutdown()
 
 
     

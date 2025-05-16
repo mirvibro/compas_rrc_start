@@ -23,7 +23,7 @@ class Robot:
 
     # Move
     def move_to_home(self):
-        self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
+        result = self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
 
     def move_to(self, frame):
         self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 50, rrc.Zone.FINE, rrc.Motion.JOINT))
@@ -34,6 +34,8 @@ class Robot:
     def shutdown(self):
         self.ros_client.close()
         self.ros_client.terminate()
+
+        print('Disconnected.')
 
 
     # Tool stuff
