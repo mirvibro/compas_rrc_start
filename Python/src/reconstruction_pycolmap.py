@@ -2,7 +2,7 @@ import pycolmap
 import os
 
 output_path = "reconstruction"
-image_dir = "imgs-lennart"
+image_dir = "imgs"
 
 def reconstruct():
 
