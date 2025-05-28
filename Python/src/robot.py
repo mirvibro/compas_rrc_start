@@ -14,7 +14,7 @@ class Robot:
         # Set tool
         self._tool = tool or Tool()
         self.abb_client.send(rrc.SetTool(self._tool._name))
-        self.abb_client.send(self.tool.release)
+        self.tool.release()
 
         # Set work object
         self._wobj = wobj
