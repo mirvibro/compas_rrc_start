@@ -42,5 +42,3 @@ def reconstruct():
 
     if result.returncode != 0:
         print(f"RealityCapture failed with return code: {result.returncode}")
-
-reconstruct()
