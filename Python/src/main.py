@@ -22,9 +22,6 @@ def read_file(file):
 
 def scan_routine(robot, camera, data):
     for target in data['TargetPlanes']['Planes']:
-        # Uncomment this to wait for user input before each step
-        #input("Press Enter to continue to the next target plane...")
-
         point = [target['point'][0],
                  target['point'][1],
                  target['point'][2]]
@@ -36,12 +33,10 @@ def scan_routine(robot, camera, data):
                   target['y-axis'][2]]
 
         robot.move_to_smooth(Frame(point, x_axis, y_axis))
-        #camera.take_picture()
-        robot.where()
+        print(robot.where())
 
 def decon_routine(robot, data):
     for target in data['TargetPlanes']['Planes']:
-
         i = 0
         drop_off = drop_off_origin + i * drop_off_offset
 
@@ -57,13 +52,12 @@ def decon_routine(robot, data):
         
         robot.move_and_grab(Frame(point, x_axis, y_axis))
         robot.move_and_release(drop_off)
-        robot.where()
+        print(robot.where())
         i = i + 1
 
 
 def recon_routine(robot, data):
     for target in data['TargetPlanes']['Planes']:
-
         i = 0
         pick_up = drop_off_origin + i * drop_off_offset
 
@@ -79,7 +73,7 @@ def recon_routine(robot, data):
         
         robot.move_and_grab(pick_up)
         robot.move_and_release(Frame(point, x_axis, y_axis))
-        robot.where()
+        print(robot.where())
         i = i + 1
 
 
@@ -107,7 +101,7 @@ if __name__ == '__main__':
     camera.release()
         
     # Do photogrammetry
-    reconstruction_realitycapture.reconstruct()
+    #reconstruction_realitycapture.reconstruct()
 
     # Start object recognition and partition thru rhino.compute, return result or write to folder
 
@@ -116,14 +110,13 @@ if __name__ == '__main__':
 
     # Start reconfiguration thru rhino.compute, return result or write to folder
     # TODO edit json path when known
-    data = read_file('./json/xyz.json')
+    #data = read_file('./json/xyz.json')
 
     # Figure out how to get from current to goal configuration
 
     # Move robot accordingly
-    decon_routine()
-    recon_routine()
-    
+    #decon_routine()
+    #recon_routine()
 
     # Close client
     robot.shutdown()
