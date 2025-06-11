@@ -35,21 +35,26 @@ class Robot:
 
     def move_and_grab(self, frame):
         point = frame.point
-        frame_above = Frame([point.x, point.y, point.z + 50], [-1, 0, 0])
+        xaxis = frame.xaxis
+        yaxis = frame.yaxis
+        frame_above = Frame([point.x, point.y, point.z + 100], xaxis, yaxis)
 
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.FINE, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.WaitTime(1))
         self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.FINE, rrc.Motion.LINEAR))
         self.grab()
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.LINEAR))
 
     def move_and_release(self,frame):
         point = frame.point
-        frame_above = Frame([point.x, point.y, point.z + 50], [-1, 0, 0])
+        xaxis = frame.xaxis
+        yaxis = frame.yaxis
+        frame_above = Frame([point.x, point.y, point.z + 100], xaxis, yaxis)
 
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.FINE, rrc.Motion.JOINT))
         self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.FINE, rrc.Motion.LINEAR))
         self.release()
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.LINEAR))
 
     def where(self):
         return self.abb_client.send_and_wait(rrc.GetFrame())
@@ -73,7 +78,7 @@ class Robot:
             self.abb_client.send(rrc.SetTool(tool.name))
         
     def grab(self):
-        self.abb_client.send(self.tool.grab)
+        self.abb_client.send(self.tool.grab())
 
     def release(self):
-        self.abb_client.send(self.tool.release)
+        self.abb_client.send(self.tool.release())

@@ -3,15 +3,16 @@ from camera import Camera
 from robot import Robot
 from gripper import Gripper
 from compas.geometry import Frame, Point
-import reconstruction_realitycapture
+from data_processing import reconstruction_realitycapture
+
 
 ROB_NAME = '/rob1'
 TOOL_NAME = 'tool1'
 WOBJ_NAME = 'wobj0'
 CAM_PORT = 0
 
-drop_off_origin = Point(200, 600, 30)
-drop_off_offset = Point(0, 100, 0)
+drop_off_origin = Point(1000, 200, 30)
+drop_off_offset = Point(0, 50, 0)
 
 def read_file(file):
     f = open(file)
@@ -36,9 +37,10 @@ def scan_routine(robot, camera, data):
         print(robot.where())
 
 def decon_routine(robot, data):
+    i = 0
     for target in data['TargetPlanes']['Planes']:
-        i = 0
-        drop_off = drop_off_origin + i * drop_off_offset
+        drop_off_point = drop_off_origin + (drop_off_offset * i)
+        drop_off = Frame(drop_off_point, [-1, 0, 0])
 
         point = [target['point'][0],
                  target['point'][1],
@@ -57,9 +59,10 @@ def decon_routine(robot, data):
 
 
 def recon_routine(robot, data):
+    i = 8
     for target in data['TargetPlanes']['Planes']:
-        i = 0
-        pick_up = drop_off_origin + i * drop_off_offset
+        pick_up_point = drop_off_origin + (drop_off_offset * i)
+        pick_up = Frame(pick_up_point, [-1, 0, 0])
 
         point = [target['point'][0],
                  target['point'][1],
@@ -74,7 +77,7 @@ def recon_routine(robot, data):
         robot.move_and_grab(pick_up)
         robot.move_and_release(Frame(point, x_axis, y_axis))
         print(robot.where())
-        i = i + 1
+        i = i - 1
 
 
 if __name__ == '__main__':
@@ -91,7 +94,7 @@ if __name__ == '__main__':
     camera.start_video_recording()
     
     # Read target planes for scan
-    data = read_file('./json/scan-planes-05-16.json')
+    data = read_file('./json/scan-planes.json')
 
     # Execute scan routine
     scan_routine(robot, camera, data)
@@ -103,20 +106,20 @@ if __name__ == '__main__':
     # Do photogrammetry
     #reconstruction_realitycapture.reconstruct()
 
-    # Start object recognition and partition thru rhino.compute, return result or write to folder
+    # Start object recognition and partition thru rhino.compute, write to folder
 
     # Transform the meshes into concrete objects
     #box-fitting-hausdorff.py
 
     # Start reconfiguration thru rhino.compute, return result or write to folder
-    # TODO edit json path when known
-    #data = read_file('./json/xyz.json')
+    decon_data = read_file('./json/decon.json')
+    recon_data = read_file('./json/recon1.json')
 
     # Figure out how to get from current to goal configuration
 
     # Move robot accordingly
-    #decon_routine()
-    #recon_routine()
+    decon_routine(robot, decon_data)
+    recon_routine(robot, recon_data)
 
     # Close client
     robot.shutdown()
