@@ -13,7 +13,8 @@ class Robot:
 
         # Set tool
         self._tool = tool or Tool()
-        self.abb_client.send(rrc.SetTool(self._tool.name))
+        self.abb_client.send(rrc.SetTool(self._tool._name))
+        self.tool.release()
 
         # Set work object
         self._wobj = wobj
@@ -23,14 +24,46 @@ class Robot:
 
     # Move
     def move_to_home(self):
-        self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
+        if(self.where() != Frame([500, 500, 500], [-1, 0, 0])):
+            self.abb_client.send_and_wait(rrc.MoveToFrame(Frame([500, 500, 500], [-1, 0, 0]), 100, rrc.Zone.Z20, rrc.Motion.JOINT))
 
-    def move_to(self, frame):
-        self.abb_client.send_and_wait(rrc.MoveToFrame(frame), 100, rrc.Zone.FINE, rrc.Motion.JOINT)
+    def move_to_exact(self, frame):
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.FINE, rrc.Motion.JOINT))
+
+    def move_to_smooth(self, frame):
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.Z200, rrc.Motion.JOINT))
+
+    def move_and_grab(self, frame):
+        point = frame.point
+        xaxis = frame.xaxis
+        yaxis = frame.yaxis
+        frame_above = Frame([point.x, point.y, point.z + 100], xaxis, yaxis)
+
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.FINE, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.WaitTime(1))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.FINE, rrc.Motion.LINEAR))
+        self.grab()
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.LINEAR))
+
+    def move_and_release(self,frame):
+        point = frame.point
+        xaxis = frame.xaxis
+        yaxis = frame.yaxis
+        frame_above = Frame([point.x, point.y, point.z + 100], xaxis, yaxis)
+
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.FINE, rrc.Motion.JOINT))
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame, 100, rrc.Zone.FINE, rrc.Motion.LINEAR))
+        self.release()
+        self.abb_client.send_and_wait(rrc.MoveToFrame(frame_above, 100, rrc.Zone.Z200, rrc.Motion.LINEAR))
+
+    def where(self):
+        return self.abb_client.send_and_wait(rrc.GetFrame())
 
     def shutdown(self):
         self.ros_client.close()
         self.ros_client.terminate()
+
+        print('Disconnected.')
 
 
     # Tool stuff
@@ -45,7 +78,7 @@ class Robot:
             self.abb_client.send(rrc.SetTool(tool.name))
         
     def grab(self):
-        self.abb_client.send(self.tool.grab)
+        self.abb_client.send(self.tool.grab())
 
     def release(self):
-        self.abb_client.send(self.tool.release)
+        self.abb_client.send(self.tool.release())
