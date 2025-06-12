@@ -1,0 +1,12 @@
+#! python3
+import compas
+from compas.datastructures import Mesh
+from compas_rhino.conversions import mesh_to_rhino
+
+raw = compas.data.json_load("C:\\Users\\michi\\Documents\\WORK\\TUrobo\\scripts\\filesrhinotocompas\\wallsmall_not_overlapping.json")
+
+rhinomeshes = []
+for mesh in raw:
+    rhinomeshes.append(mesh_to_rhino(mesh))
+
+m = rhinomeshes
