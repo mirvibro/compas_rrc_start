@@ -16,6 +16,7 @@ from compas_cra.viewers import cra_view
 from compas_assembly.datastructures import Block, Interface
 from compas_viewer import Viewer
 from compas_viewer.scene import Tag, FrameObject, TagObject
+from compas.colors import Color
 
 
 
@@ -35,10 +36,10 @@ def scan_to_CRA_assembly(filepath: str):
         assembly:  class: compas_cra.datastructures.CRA_Assembly
 
     """
-    d_x = 13.50 #dimensions of desk
-    d_y = 13.50
+    d_x = 1450 #dimensions of desk
+    d_y = 1450
 
-    support = Box.from_corner_corner_height([0.0, 0.0, -1.0], [d_y, d_x, -1.0], 1.0)
+    support = Box.from_corner_corner_height([0.0, 0.0, -10.0], [d_y, d_x, -10.0], 10.0)
 
     free = compas.json_load(filepath)
 
@@ -89,6 +90,7 @@ def connectivity_graph(assembly, vis=True, tags=True, vis_blocks=False):
     # edges as structured internally
     og_edges = []
     for edge in assembly.edges():
+        print(edge)
         e = assembly.edge_line(edge)
         og_edges.append(e)
 
@@ -119,7 +121,6 @@ def connectivity_graph(assembly, vis=True, tags=True, vis_blocks=False):
         print("Set vis=True to visualize")
 
     return None
-
 
 
 def target_frames_by_z(assembly, save_frames=False, vis=False, tags=False):
@@ -187,3 +188,103 @@ def target_frames_by_z(assembly, save_frames=False, vis=False, tags=False):
         print("Saving as file not implemented yet, please tell Michael he's lazy")
 
     return targetframes_sorted
+
+def target_frames_from_idx(assembly, idx=[], save_frames=False, vis=False, tags=False):
+
+    blocks_list = list(assembly.blocks())
+    top_face_frames = []
+    for i in idx:
+        block = blocks_list[i]
+        topface = block.top()
+        frame_og = block.face_frame(topface)
+        #frame_og.flip()
+        top_face_frames.append(frame_og)
+
+    l = len(idx)
+    if l > 1:
+        blue_shades = [(0, 0, 0.5 + (1 - 0.5) * i / (l - 1)) for i in range(l)]
+    else:
+        blue_shades = [(0, 0, 1.0)] 
+    
+    color_map = {val: blue_shades[i] for i, val in enumerate(idx)}
+
+    if vis == True:
+        viewer = Viewer()
+        viewer.scene.add(top_face_frames)
+        if tags == True:
+            for order_nr, frame in enumerate(top_face_frames, start=1):
+                tag = Tag(text=str(order_nr), position=frame.point)
+                viewer.scene.add(tag)
+        for block in assembly.blocks():
+            node_text = assembly.block_node(block)
+            if node_text == 0:
+                viewer.scene.add(block, show_faces=True, color=Color(0.8, 0.9, 0.8), opacity=1.0)   
+            elif node_text in color_map:
+                r, g, b = 0.3, 0.3, color_map[node_text][2]
+                viewer.scene.add(block, show_faces=True, color=Color(r, g, b), opacity=0.6)
+            else:
+                viewer.scene.add(block, show_faces=True, color=Color(0.9, 0.9, 0.9), opacity=1.0)
+        frame_points = []
+        for frame in top_face_frames:
+            frame_points.append(frame.point)
+        viewer.renderer.camera.target = centroid_points(frame_points)
+        #viewer.renderer.camera.position = [500, -500, 200]
+        viewer.show()
+    else:
+        print("Set vis=True to visualize frames")
+
+    if save_frames == True: # to do
+        print("Saving as file not implemented yet, please tell Michael he's lazy")
+
+    return top_face_frames
+
+def target_frames_from_idx_recon(assembly, idx=[], save_frames=False, vis=False, tags=False):
+
+
+    top_face_frames = []
+    for i in idx:
+        block = assembly.node_block(i)
+        topface = block.top()
+        frame_og = block.face_frame(topface)
+        #frame_og.flip()
+        if frame_og.normal.z > 0:
+            frame_og.flip()
+        top_face_frames.append(frame_og)
+
+    l = len(idx)
+    if l > 1:
+        blue_shades = [(0, 0, 0.5 + (1 - 0.5) * i / (l - 1)) for i in range(l)]
+    else:
+        blue_shades = [(0, 0, 1.0)] 
+    
+    color_map = {val: blue_shades[i] for i, val in enumerate(idx)}
+
+    if vis == True:
+        viewer = Viewer()
+        viewer.scene.add(top_face_frames)
+        if tags == True:
+            for order_nr, frame in enumerate(top_face_frames, start=1):
+                tag = Tag(text=str(order_nr), position=frame.point)
+                viewer.scene.add(tag)
+        for block in assembly.blocks():
+            node_text = assembly.block_node(block)
+            if node_text == 0:
+                viewer.scene.add(block, show_faces=True, color=Color(0.8, 0.9, 0.8), opacity=1.0)   
+            elif node_text in color_map:
+                r, g, b = 0.3, 0.3, color_map[node_text][2]
+                viewer.scene.add(block, show_faces=True, color=Color(r, g, b), opacity=0.6)
+            else:
+                viewer.scene.add(block, show_faces=True, color=Color(0.9, 0.9, 0.9), opacity=1.0)
+        frame_points = []
+        for frame in top_face_frames:
+            frame_points.append(frame.point)
+        viewer.renderer.camera.target = centroid_points(frame_points)
+        #viewer.renderer.camera.position = [500, -500, 200]
+        viewer.show()
+    else:
+        print("Set vis=True to visualize frames")
+
+    if save_frames == True: # to do
+        print("Saving as file not implemented yet, please tell Michael he's lazy")
+
+    return top_face_frames
