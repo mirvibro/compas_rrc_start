@@ -1,14 +1,27 @@
-# E210-02 Research Project Jan-Jul 2025
+# E210-02 Research Project
+Jan-Jul 2025
 
-# Welcome to (working title robot project dynamic (dis)assembly)
+## The project
+This repo contains code that supports dynamic robotic de- and reconfiguration of building structures.
+The hardware required for execution is: an ABB 6-axis robotic arm and robot controller (ABB GoFa12 1500 127cm), an eye-in-hand camera setup (Logitech Brio 100), a tool (gripper or suction tool), a PC, an ethernet cable to connect robot controller and PC, a long USB cable to connect webcam and PC.
 
-Working title robot project dynamic (dis)assembly does this and that.
-A python script tells cobot ABB GoFa12 1500 127cm what to do using [compas_rrc](https://github.com/compas-rrc/compas_rrc).
+At the core of our project is a python script that orchestrates the entire workflow: It establishes a connection to the robot and starts a scanning routine that is executed by the robot and filmed by the webcam. It initiates photogrammetric processing of the resulting video, passes the mesh to grasshopper scripts made available via rhino.compute, reads the results of static analysis, de- and reconfiguration, and lastly passes the motion sequences on to the robot.
 
-Soon, a camera will be mounted on the robot, it will perform a scanning routine, which then gives a collection of pictures to be photogrammetrated and meshed. A pickup order is generated and executed.
+## Using compas rrc
+This repo is a fork of [compas_rrc_start](https://github.com/compas-rrc/compas_rrc_start), because our workflow relies heavily on the remote robot control framework [compas_rrc](https://github.com/compas-rrc/compas_rrc) created by researchers at ETH Zürich.
 
+To run this project, follow the installation guide below and additionally install TODO libraries in your python environment.
 
+## Our contribution
 
+### Code wise
+the python oop, the python static solver, the grasshopper scripts
+
+### Concept wise
+paper might be published (submitted for review)
+
+## Contact
+For questions, email xyz@tuwien.ac.at
 
 
 ># Installation guide
