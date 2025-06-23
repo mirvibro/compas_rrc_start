@@ -1,5 +1,4 @@
-# E210-02 robotic research unit
-=======
+# E210-02 Research Project Jan-Jul 2025
 
 # Welcome to (working title robot project dynamic (dis)assembly)
 
@@ -12,28 +11,28 @@ Soon, a camera will be mounted on the robot, it will perform a scanning routine,
 
 
 
-# Installation guide
-
-This guide is taken from the origin of this fork, the [compas_rrc_start repository](https://github.com/compas-rrc/compas_rrc_start).
-
-## Requirements
-
-* Windows 10 Pro 64-bit
-* CPU 2 GHz
-* Memory 8 GB
-* Disk 10 GB SSD
-* Screen 1920x1080
-
-## Installation
-
-### Anaconda
-
-* [Anaconda 3](https://www.anaconda.com/products/individual#Downloads): Anaconda is an open source scientific Python distribution. With this tool, we can easily create a Python environment. Install Anaconda using default options.
-
-### Docker
-* [Docker Desktop](https://www.docker.com/products/docker-desktop): Docker is a virtualization platform. We use it to run Linux containers for ROS on Windows machines. 
-* After installation, it is required to enable "Virtualization" on the BIOS of the computer. Usually this requires rebooting your computer and pressing a vendor-specific key (`F2`, `F4`, `Del` are typical options) to enter the BIOS.
-
+># Installation guide
+>
+>This guide is taken from the origin of this fork, the [compas_rrc_start repository](https://github.com/compas-rrc/compas_rrc_start).
+>
+>## Requirements
+>
+>* Windows 10 Pro 64-bit
+>* CPU 2 GHz
+>* Memory 8 GB
+>* Disk 10 GB SSD
+>* Screen 1920x1080
+>
+>## Installation
+>
+>### Anaconda
+>
+>* [Anaconda 3](https://www.anaconda.com/products/individual#Downloads): Anaconda is an open source scientific Python distribution. With this tool, we can easily create a Python environment. Install Anaconda using default options.
+>
+>### Docker
+>* [Docker Desktop](https://www.docker.com/products/docker-desktop): Docker is a virtualization platform. We use it to run Linux containers for ROS on Windows machines. 
+>* After installation, it is required to enable "Virtualization" on the BIOS of the computer. Usually this requires rebooting your computer and pressing a vendor-specific key (`F2`, `F4`, `Del` are typical options) to enter the BIOS.
+>
 ### Visual Studio
 
 * [Visual Studio Code](https://code.visualstudio.com/): We recommend VS Code as the Python editor because it offers an easy-to-use interface. With this tool you can develop your process code. 
