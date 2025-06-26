@@ -119,12 +119,13 @@ def conn_graph_gv(assembly, dis_seq, goal_block, viewer):
             revised_edges[index] = Line([edgetest.end.x, edgetest.end.y, -10.0], edgetest.end) 
         elif edgetest.end.z < 0:
             revised_edges[index] = Line(edgetest.start, [edgetest.start.x, edgetest.start.y, -10.0])
-        edgetest.start.x += -6
+        """ edgetest.start.x += -6
         edgetest.end.x += -6
         edgetest.start.y += 4
         edgetest.end.y += 4
         edgetest.start.z += -3
-        edgetest.end.z += -3
+        edgetest.end.z += -3 """
+
 
     thick_lines=[]
     for e in revised_edges:
