@@ -4,12 +4,13 @@ from robot import Robot
 from gripper import Gripper
 from compas.geometry import Frame, Point
 from data_processing import reconstruction_realitycapture
+import time
 
 
 ROB_NAME = '/rob1'
 TOOL_NAME = 'tool1'
 WOBJ_NAME = 'wobj0'
-CAM_PORT = 0
+CAM_PORT = 1 #michis laptop port 1 #miriams laptop port 0
 
 drop_off_origin = Point(1000, 200, 30)
 drop_off_offset = Point(0, 50, 0)
@@ -90,18 +91,19 @@ if __name__ == '__main__':
     robot.move_to_home()
 
     # Set up camera
-    camera = Camera(CAM_PORT, "vids")
-    camera.start_video_recording()
+    #camera = Camera(CAM_PORT, "vids")
+    #camera.start_video_recording()
     
     # Read target planes for scan
-    data = read_file('./json/scan-planes.json')
+    data = read_file('compas_rrc_start\\json\\scan-planes2.json') #'./json/scan-planes.json'
 
     # Execute scan routine
-    scan_routine(robot, camera, data)
+    #scan_routine(robot, camera, data)
+    time.sleep(3)
 
     # Stop recording
-    camera.stop_video_recording()
-    camera.release()
+    #camera.stop_video_recording()
+    #camera.release()
         
     # Do photogrammetry
     #reconstruction_realitycapture.reconstruct()
@@ -112,8 +114,8 @@ if __name__ == '__main__':
     #box-fitting-hausdorff.py
 
     # Start reconfiguration thru rhino.compute, return result or write to folder
-    decon_data = read_file('./json/decon.json')
-    recon_data = read_file('./json/recon1.json')
+    decon_data = read_file('compas_rrc_start\\json\\decon.json')
+    recon_data = read_file('compas_rrc_start\\json\\recon1.json')
 
     # Figure out how to get from current to goal configuration
 

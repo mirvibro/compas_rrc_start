@@ -32,7 +32,7 @@ if __name__ == '__main__':
     speed = 100
     
     # Open Gripper virtual
-    abb.send_and_wait(rrc.PulseDigital('gripper_open', 0.2))
+    abb.send_and_wait(rrc.PulseDigital('ABB_Scalable_IO_0_DO2', 0.2))
     
     # Move robot the new pos
     done = abb.send_and_wait(rrc.MoveToJoints(robot_joints, external_axes, speed, rrc.Zone.FINE))
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print('Feedback = ', done)
 
     # Close Gripper virtual
-    abb.send_and_wait(rrc.PulseDigital('gripper_close', 0.2))
+    abb.send_and_wait(rrc.PulseDigital('ABB_Scalable_IO_0_DO1', 0.2))
 
     # Print feedback 
     print('Feedback = ', done)
